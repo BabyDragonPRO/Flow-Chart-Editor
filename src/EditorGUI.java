@@ -3,14 +3,15 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
 public class EditorGUI extends JPanel
 {
-    private DraggableImage test;
+    private EditableImage test;
     private ResizeMesh test2;
     private JButton test3;
+
+    public ArrayList<EditableImage> chartObjects;
 
     public static void main(String[] args)
     {
@@ -45,36 +46,38 @@ public class EditorGUI extends JPanel
         setLayout(null);
         setOpaque(true);
 
-        test = new DraggableImage("./src/res/test.png");
-        test.setBounds(500, 300, 200, 100);
-        test.setDraggable(false);
-        add(test);
+        chartObjects = new ArrayList<>();
 
-        EditorGUI handle = this;
+        chartObjects.add(new EditableImage(500, 300, 200, 100, this, "./src/res/test.png"));
+        chartObjects.add(new EditableImage(100, 300, 200, 100, this, "./src/res/test.png"));
+        chartObjects.add(new EditableImage(400, 600, 200, 100, this, "./src/res/test.png"));
 
-        MouseListener mouseListener = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                for (MouseListener listener : test.getMouseListeners())
-                    test.removeMouseListener(listener);
-
-                test.setDraggable(true);
-
-                test2 = new ResizeMesh(handle, test);
-
-                handle.setComponentZOrder(test, getComponentCount() - 1);
-            }
-        };
-
-        test.addMouseListener(mouseListener);
+        addChartObjects();
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                test2.deleteMesh();
-                test.setDraggable(false);
-                test.addMouseListener(mouseListener);
+                unselectAll();
             }
         });
+    }
+
+    public void addChartObjects()
+    {
+        for (EditableImage object : chartObjects)
+        {
+            add(object);
+        }
+    }
+
+    public void unselectAll()
+    {
+        for (EditableImage object : chartObjects)
+        {
+            object.setDraggable(false);
+            object.setSelectable(true);
+            if (object.mesh != null)
+                object.mesh.deleteMesh();
+        }
     }
 }

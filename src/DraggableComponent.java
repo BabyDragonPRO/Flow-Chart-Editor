@@ -13,22 +13,23 @@ public class DraggableComponent extends JComponent
     protected boolean xLocked = false;
     protected boolean yLocked = false;
 
-    public DraggableComponent()
+    public DraggableComponent(int x, int y, int width, int height)
     {
+        setBounds(x, y, width, height);
         addDragListeners();
-        setOpaque(false);
     }
 
-    public DraggableComponent(Color color)
+    public DraggableComponent(int x, int y, int width, int height, Color color)
     {
-        addDragListeners();
-        setOpaque(true);
+        this(x, y, width, height);
         setBackground(color);
+        setOpaque(true);
     }
 
-    private void addDragListeners()
+    protected void addDragListeners()
     {
         final DraggableComponent handle = this;
+
         addMouseMotionListener(new MouseAdapter() {
 
             @Override
@@ -52,6 +53,14 @@ public class DraggableComponent extends JComponent
                 }
             }
         });
+    }
+
+    protected void removeDragListeners()
+    {
+        for (MouseMotionListener listener : this.getMouseMotionListeners())
+            removeMouseMotionListener(listener);
+
+        setCursor(Cursor.getDefaultCursor());
     }
 
     public void setDraggable(boolean d)
@@ -91,13 +100,5 @@ public class DraggableComponent extends JComponent
             g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
         }
-    }
-
-    private void removeDragListeners()
-    {
-        for (MouseMotionListener listener : this.getMouseMotionListeners())
-            removeMouseMotionListener(listener);
-
-        setCursor(Cursor.getDefaultCursor());
     }
 }

@@ -1,18 +1,15 @@
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 
-public class DraggableImage extends DraggableComponent implements ImageObserver
+public class ImageButton extends JComponent
 {
     protected Image image;
 
-    public DraggableImage(String path)
+    public ImageButton(String path)
     {
-        super();
-        setLayout(null);
-
         try {
             image = ImageIO.read(new File(path));
         }
@@ -36,17 +33,5 @@ public class DraggableImage extends DraggableComponent implements ImageObserver
             g2d.setColor(getBackground());
             g2d.fillRect(0, 0, getWidth(), getHeight());
         }
-    }
-
-    @Override
-    public boolean imageUpdate(Image image, int infoFlags, int x, int y, int w, int h)
-    {
-        if (infoFlags == ALLBITS)
-        {
-            repaint();
-            return false;
-        }
-
-        return true;
     }
 }
