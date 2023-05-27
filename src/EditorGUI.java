@@ -3,15 +3,17 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class EditorGUI extends JPanel
 {
-    private EditableImage test;
-    private ResizeMesh test2;
-    private JButton test3;
+    private ToolPanel toolPanel;
+    private LayerPanel layerPanel;
 
     public ArrayList<EditableImage> chartObjects;
+
+    private Tool currentTool;
 
     public static void main(String[] args)
     {
@@ -52,22 +54,11 @@ public class EditorGUI extends JPanel
         chartObjects.add(new EditableImage(100, 300, 200, 100, this, "./src/res/test.png"));
         chartObjects.add(new EditableImage(400, 600, 200, 100, this, "./src/res/test.png"));
 
+        toolPanel = new ToolPanel(10, 10, this);
+
+        add(toolPanel);
+
         addChartObjects();
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                unselectAll();
-            }
-        });
-    }
-
-    public void addChartObjects()
-    {
-        for (EditableImage object : chartObjects)
-        {
-            add(object);
-        }
     }
 
     public void unselectAll()
@@ -79,5 +70,65 @@ public class EditorGUI extends JPanel
             if (object.mesh != null)
                 object.mesh.deleteMesh();
         }
+    }
+
+    public void selectTool(Tool tool)
+    {
+        if (currentTool != tool)
+        {
+            removeAllListeners();
+
+            if (currentTool == Tool.SELECTION)
+            {
+                unselectAll();
+
+                for (EditableImage object : chartObjects)
+                    object.setSelectable(false);
+            }
+
+            switch (tool)
+            {
+                case SELECTION -> {
+                    for (EditableImage object : chartObjects)
+                        object.setSelectable(true);
+
+                    addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            unselectAll();
+                        }
+                    });
+                }
+
+                case TERMINATOR, PROCESS, DECISION, DELAY, DATA, DOCUMENT, DOCUMENTS -> {
+                    EditorGUI handle = this;
+
+                    handle.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            Point point = e.getPoint();
+
+                            chartObjects.add(new EditableImage(point.x - 50, point.y - 50, 100, 100, handle, "./src/res/test.png"));
+                            handle.add(chartObjects.get(chartObjects.size() - 1));
+                            repaint();
+                        }
+                    });
+                }
+            }
+
+            currentTool = tool;
+        }
+    }
+
+    private void removeAllListeners()
+    {
+        for (MouseListener listener : getMouseListeners())
+            removeMouseListener(listener);
+    }
+
+    public void addChartObjects()
+    {
+        for (EditableImage object : chartObjects)
+            add(object);
     }
 }

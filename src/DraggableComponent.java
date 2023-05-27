@@ -45,19 +45,13 @@ public class DraggableComponent extends JComponent
                 Point position = new Point(xLocked ? getX() : mouse.x - parent.x - anchor.x,
                         yLocked ? getY() : mouse.y - parent.y - anchor.y);
                 setLocation(position);
-
-                if (overbearing)
-                {
-                    getParent().setComponentZOrder(handle, 0);
-                    repaint();
-                }
             }
         });
     }
 
     protected void removeDragListeners()
     {
-        for (MouseMotionListener listener : this.getMouseMotionListeners())
+        for (MouseMotionListener listener : getMouseMotionListeners())
             removeMouseMotionListener(listener);
 
         setCursor(Cursor.getDefaultCursor());

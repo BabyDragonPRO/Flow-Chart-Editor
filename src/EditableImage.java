@@ -13,12 +13,11 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     protected Image image;
     protected EditorGUI panel;
     protected ResizeMesh mesh;
-    protected boolean selectable = true;
+    protected boolean selectable = false;
 
     public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path)
     {
         super(x, y, width, height);
-        addClickListeners();
         setDraggable(false);
 
         try {
@@ -82,8 +81,9 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     @Override
     protected void paintComponent(Graphics g)
     {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.clearRect(0, 0, getWidth(), getHeight());
+
         if (image != null)
             g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 

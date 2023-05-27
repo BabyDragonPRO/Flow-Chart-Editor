@@ -65,6 +65,8 @@ public class ResizeMesh
                 update(-1);
             }
         });
+
+        panel.repaint();
     }
 
     public void update(int index)
