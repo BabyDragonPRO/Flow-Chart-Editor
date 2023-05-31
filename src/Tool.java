@@ -1,3 +1,7 @@
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 public enum Tool
 {
     SELECTION("selection", "Can select and move objects around"),
@@ -32,5 +36,10 @@ public enum Tool
     public String getIconToolTip()
     {
         return iconToolTip;
+    }
+
+    public String getShapePath()
+    {
+        return "./src/res/test.png";
     }
 }

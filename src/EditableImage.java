@@ -1,15 +1,16 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 
 public class EditableImage extends DraggableComponent implements ImageObserver
 {
+    private final EditableImage handle;
+
     protected Image image;
     protected EditorGUI panel;
     protected ResizeMesh mesh;
@@ -18,6 +19,7 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path)
     {
         super(x, y, width, height);
+        handle = this;
         setDraggable(false);
 
         try {
@@ -39,13 +41,10 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         if (selectable != s)
         {
             if (s)
-            {
                 addClickListeners();
-            }
+
             else
-            {
                 removeClickListeners();
-            }
         }
 
         selectable = s;
@@ -53,21 +52,18 @@ public class EditableImage extends DraggableComponent implements ImageObserver
 
     protected void addClickListeners()
     {
-        final DraggableComponent handle = this;
-
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                for (EditableImage object : panel.chartObjects)
-                    object.setSelectable(false);
+                panel.unselectObjects();
+                mesh = new ResizeMesh(panel, handle);
+                panel.setComponentZOrder(handle, panel.getComponentCount() - 1);
 
+                setBorder(new LineBorder(Color.BLUE));
                 setDraggable(true);
                 setCursor(draggingCursor);
 
                 anchor = e.getPoint();
-                mesh = new ResizeMesh(panel, handle);
-
-                panel.setComponentZOrder(handle, panel.getComponentCount() - 1);
             }
         });
     }
@@ -76,6 +72,32 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     {
         for (MouseListener listener : getMouseListeners())
             removeMouseListener(listener);
+    }
+
+    @Override
+    protected void addDragListeners() {
+        super.addDragListeners();
+
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteObject");
+        getActionMap().put("deleteObject", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (EditableImage object : panel.chartObjects)
+                    object.setSelectable(true);
+
+                handle.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "none");
+                mesh.deleteMesh();
+                panel.remove(handle);
+                panel.repaint();
+            }
+        });
+    }
+
+    @Override
+    protected void removeDragListeners() {
+        super.removeDragListeners();
+
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "none");
     }
 
     @Override

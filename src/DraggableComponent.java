@@ -9,7 +9,6 @@ public class DraggableComponent extends JComponent
     protected Point anchor;
     protected Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
     protected boolean draggable = true;
-    protected boolean overbearing = false;
     protected boolean xLocked = false;
     protected boolean yLocked = false;
 
@@ -28,8 +27,6 @@ public class DraggableComponent extends JComponent
 
     protected void addDragListeners()
     {
-        final DraggableComponent handle = this;
-
         addMouseMotionListener(new MouseAdapter() {
 
             @Override

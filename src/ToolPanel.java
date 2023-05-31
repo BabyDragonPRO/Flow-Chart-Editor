@@ -1,9 +1,9 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class ToolPanel extends JPanel
     private ArrayList<ImageButton> toolButtons;
     private ImageButton closeButton;
 
-    private EditorGUI parent;
+    private final EditorGUI parent;
     private Image image;
     private Point anchor;
     private Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
@@ -48,7 +48,14 @@ public class ToolPanel extends JPanel
         });
 
         add(closeButton);
+        addTools();
+        addDragListeners();
 
+        parent.add(this);
+    }
+
+    protected void addTools()
+    {
         tools = new ArrayList<>();
         toolButtons = new ArrayList<>();
 
@@ -78,6 +85,12 @@ public class ToolPanel extends JPanel
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
+
+                    for (ImageButton btn : toolButtons)
+                        btn.setBorder(null);
+
+                    toolButtons.get(finalI).setBorder(new LineBorder(new Color(160, 160, 160)));
+
                     parent.selectTool(tools.get(finalI));
                 }
             });
@@ -85,9 +98,7 @@ public class ToolPanel extends JPanel
             add(toolButtons.get(i));
         }
 
-        addDragListeners();
-
-        parent.add(this);
+        toolButtons.get(0).setBorder(new LineBorder(new Color(160, 160, 160)));
     }
 
     protected void addDragListeners()

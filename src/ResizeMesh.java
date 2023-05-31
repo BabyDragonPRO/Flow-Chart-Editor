@@ -17,8 +17,6 @@ public class ResizeMesh
         this.panel = panel;
         this.parent = parent;
 
-        parent.setBorder(new LineBorder(Color.BLUE));
-
         buttons = new ArrayList<>();
 
         buttons.add(new DraggableComponent(parent.getX() - 5, parent.getY() - 5, 10, 10, Color.BLUE));
