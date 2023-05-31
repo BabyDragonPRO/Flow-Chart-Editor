@@ -10,11 +10,13 @@ public class EditorGUI extends JPanel
     private Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
     private final EditorGUI handle;
+    private EditorMenuBar menuBar;
     private ToolPanel toolPanel;
     private LayerPanel layerPanel;
     public ArrayList<EditableImage> chartObjects;
     public ArrayList<EditableImage> selectedObjects;
-    private Tool currentTool;
+    public ArrayList<ArrowComponent> arrows;
+    public Tool currentTool;
 
     private Point selectionAnchor;
     private Point selectionStart;
@@ -81,10 +83,10 @@ public class EditorGUI extends JPanel
         setLayout(null);
         setOpaque(true);
 
+        menuBar = new EditorMenuBar(this, frame);
+
         chartObjects = new ArrayList<>();
         selectedObjects = new ArrayList<>();
-
-        loadChartObjects();
 
         toolPanel = new ToolPanel(10, 10, this);
 
@@ -172,7 +174,7 @@ public class EditorGUI extends JPanel
             public void mouseClicked(MouseEvent e) {
                 Point point = e.getPoint();
 
-                chartObjects.add(new EditableImage(point.x - 50, point.y - 50, 100, 100, handle, tool.getShapePath()));
+                chartObjects.add(new EditableImage(point.x - 50, point.y - 50, 100, 100, handle, tool.getShapePath(), null));
                 handle.add(chartObjects.get(chartObjects.size() - 1));
                 repaint();
             }
@@ -206,16 +208,6 @@ public class EditorGUI extends JPanel
 
         for (MouseMotionListener listener : getMouseMotionListeners())
             removeMouseMotionListener(listener);
-    }
-
-    public void loadChartObjects()
-    {
-        chartObjects.add(new EditableImage(500, 300, 200, 100, this, "./src/res/test.png"));
-        chartObjects.add(new EditableImage(100, 300, 200, 100, this, "./src/res/test.png"));
-        chartObjects.add(new EditableImage(400, 600, 200, 100, this, "./src/res/test.png"));
-
-        for (EditableImage object : chartObjects)
-            add(object);
     }
 
     public void unselectObjects()

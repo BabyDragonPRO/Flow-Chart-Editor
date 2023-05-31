@@ -1,0 +1,8 @@
+SHAPES
+399, 184, 100, 100, ./src/res/test.png, null
+768, 128, 100, 100, ./src/res/test.png, null
+617, 258, 100, 100, ./src/res/test.png, null
+887, 280, 100, 100, ./src/res/test.png, 128, 0, 64, 32
+428, 331, 100, 100, ./src/res/test.png, null
+273, 351, 100, 100, ./src/res/test.png, null
+569, 82, 100, 100, ./src/res/test.png, null

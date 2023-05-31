@@ -3,6 +3,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
@@ -12,11 +13,14 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     private final EditableImage handle;
 
     protected Image image;
+    protected Image coloredImage;
+    protected Color color;
+    protected String path;
     protected EditorGUI panel;
     protected ResizeMesh mesh;
     protected boolean selectable = false;
 
-    public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path)
+    public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path, Color color)
     {
         super(x, y, width, height);
         handle = this;
@@ -24,6 +28,16 @@ public class EditableImage extends DraggableComponent implements ImageObserver
 
         try {
             image = ImageIO.read(new File(path));
+            this.path = path;
+
+            if (color != null)
+            {
+                this.color = color;
+                dye(color);
+            }
+
+            else
+                coloredImage = image;
         }
 
         catch (IOException e)
@@ -34,6 +48,41 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         this.panel = panel;
 
         panel.add(this);
+    }
+
+    public String getPath()
+    {
+        return path;
+    }
+
+    public Color getColor()
+    {
+        return color;
+    }
+
+    public void setColor(Color color)
+    {
+        if (color == null)
+            coloredImage = image;
+
+        else
+            dye(color);
+
+        this.color = color;
+    }
+
+    public void dye(Color color)
+    {
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        BufferedImage dyed = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = dyed.createGraphics();
+        g.drawImage(image, 0, 0, this);
+        g.setComposite(AlphaComposite.SrcAtop);
+        g.setColor(color);
+        g.fillRect(0, 0, w, h);
+        g.dispose();
+        coloredImage = dyed;
     }
 
     public void setSelectable(boolean s)
@@ -106,8 +155,8 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        if (image != null)
-            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+        if (coloredImage != null)
+            g2d.drawImage(coloredImage, 0, 0, getWidth(), getHeight(), this);
 
         else
         {
