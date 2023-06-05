@@ -29,7 +29,6 @@ public class SaveAsAction extends AbstractAction
 
             if (parent.chartObjects.size() > 0)
             {
-                bw.write("SHAPES\r\n");
                 for (EditableImage object : parent.chartObjects)
                 {
                     String s = "null";
@@ -37,7 +36,7 @@ public class SaveAsAction extends AbstractAction
                     if (color != null)
                         s = String.format("%d, %d, %d, %d", color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
-                    bw.write(String.format("%d, %d, %d, %d, %s, %s\r\n", object.getX(), object.getY(),
+                    bw.write(String.format("SHAPE, %d, %d, %d, %d, %s, %s\r\n", object.getX(), object.getY(),
                             object.getWidth(), object.getHeight(), object.getPath(), s));
                 }
             }
@@ -61,9 +60,18 @@ public class SaveAsAction extends AbstractAction
     public void actionPerformed(ActionEvent e)
     {
         JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FlowchartFilter());
+        fc.setAcceptAllFileFilterUsed(false);
 
         int val = fc.showSaveDialog(parent);
         if (val == JFileChooser.APPROVE_OPTION)
-            saveToFile(fc.getSelectedFile(), parent);
+        {
+            File selected = fc .getSelectedFile();
+
+            if (selected.getName().endsWith(".flowchart"))
+                saveToFile(selected, parent);
+            else
+                saveToFile(new File(selected.getPath() + ".flowchart"), parent);
+        }
     }
 }

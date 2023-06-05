@@ -10,9 +10,9 @@ public class EditorGUI extends JPanel
     private Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
     private final EditorGUI handle;
-    private EditorMenuBar menuBar;
-    private ToolPanel toolPanel;
-    private LayerPanel layerPanel;
+    protected EditorMenuBar menuBar;
+    protected ToolPanel toolPanel;
+    protected LayerPanel layerPanel;
     public ArrayList<EditableImage> chartObjects;
     public ArrayList<EditableImage> selectedObjects;
     public ArrayList<ArrowComponent> arrows;
@@ -83,8 +83,6 @@ public class EditorGUI extends JPanel
         setLayout(null);
         setOpaque(true);
 
-        menuBar = new EditorMenuBar(this, frame);
-
         chartObjects = new ArrayList<>();
         selectedObjects = new ArrayList<>();
 
@@ -92,6 +90,8 @@ public class EditorGUI extends JPanel
 
         add(toolPanel);
         selectTool(Tool.SELECTION);
+
+        menuBar = new EditorMenuBar(this, frame);
     }
 
     public void selectTool(Tool tool)
@@ -127,6 +127,7 @@ public class EditorGUI extends JPanel
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                System.out.println("SSS");
                 unselectObjects();
             }
         });
@@ -173,8 +174,9 @@ public class EditorGUI extends JPanel
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point point = e.getPoint();
-
-                chartObjects.add(new EditableImage(point.x - 50, point.y - 50, 100, 100, handle, tool.getShapePath(), null));
+                boolean isHalfWidth = tool.ordinal() > Tool.STORED_DATA.ordinal();
+                chartObjects.add(new EditableImage(point.x - (isHalfWidth ? 37 : 74), point.y - 37, isHalfWidth ? 74 : 148,
+                        74, handle, tool.getShapePath(), null));
                 handle.add(chartObjects.get(chartObjects.size() - 1));
                 repaint();
             }
@@ -186,7 +188,6 @@ public class EditorGUI extends JPanel
         if (currentTool == Tool.SELECTION)
         {
             unselectObjects();
-
             for (EditableImage object : chartObjects)
                 object.setSelectable(false);
         }
@@ -213,6 +214,8 @@ public class EditorGUI extends JPanel
     public void unselectObjects()
     {
         selectedObjects.clear();
+        menuBar.changeColorAction.setEnabled(false);
+        menuBar.transformAction.setEnabled(false);
 
         for (EditableImage object : chartObjects)
         {
@@ -300,6 +303,22 @@ public class EditorGUI extends JPanel
         g2d.setColor(Color.BLUE);
         g2d.setStroke(stroke);
         g2d.drawRect(selection.x, selection.y, selection.width, selection.height);
+    }
+
+    public void clearWorkspace()
+    {
+        for (EditableImage object : chartObjects)
+        {
+            if (object.mesh != null)
+                object.mesh.deleteMesh();
+
+            remove(object);
+        }
+
+        chartObjects.clear();
+        selectedObjects.clear();
+
+        repaint();
     }
 
     @Override

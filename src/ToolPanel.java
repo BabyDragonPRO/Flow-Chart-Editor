@@ -7,12 +7,14 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ToolPanel extends JPanel
 {
-    private ArrayList<Tool> tools;
+    private List<Tool> tools;
     private ArrayList<ImageButton> toolButtons;
-    private ImageButton closeButton;
+    protected ImageButton closeButton;
 
     private final EditorGUI parent;
     private Image image;
@@ -37,15 +39,7 @@ public class ToolPanel extends JPanel
         setBounds(x, y, 75, 550);
         setLayout(null);
 
-        ToolPanel handle = this;
         closeButton = new ImageButton(45, 12, 20, 20, "./src/res/close_icon.png", "./src/res/close_icon.png");
-        closeButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                handle.hide();
-            }
-        });
 
         add(closeButton);
         addTools();
@@ -56,27 +50,13 @@ public class ToolPanel extends JPanel
 
     protected void addTools()
     {
-        tools = new ArrayList<>();
+        tools = Arrays.asList(Tool.values());
         toolButtons = new ArrayList<>();
-
-        tools.add(Tool.SELECTION);
-        tools.add(Tool.SELECT_AREA);
-        tools.add(Tool.TERMINATOR);
-        tools.add(Tool.PROCESS);
-        tools.add(Tool.DECISION);
-        tools.add(Tool.DELAY);
-        tools.add(Tool.DATA);
-        tools.add(Tool.DOCUMENT);
-        tools.add(Tool.DOCUMENTS);
 
         for (int i = 0; i < tools.size(); i++)
         {
-            toolButtons.add(new ImageButton(i % 2 == 1 ? 40 : 5,
-                    i / 2 * 35 + 48,
-                    30,
-                    30,
-                    tools.get(i).getIconPath(),
-                    tools.get(i).getIconPressedPath()));
+            toolButtons.add(new ImageButton(i % 2 == 1 ? 40 : 5, i / 2 * 35 + 48, 30, 30,
+                    tools.get(i).getIconPath(), tools.get(i).getIconPressedPath()));
 
             toolButtons.get(i).setToolTipText(tools.get(i).getIconToolTip());
 
@@ -85,12 +65,10 @@ public class ToolPanel extends JPanel
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     super.mouseClicked(e);
-
                     for (ImageButton btn : toolButtons)
                         btn.setBorder(null);
 
                     toolButtons.get(finalI).setBorder(new LineBorder(new Color(160, 160, 160)));
-
                     parent.selectTool(tools.get(finalI));
                 }
             });
@@ -98,13 +76,11 @@ public class ToolPanel extends JPanel
             add(toolButtons.get(i));
         }
 
-        toolButtons.get(0).setBorder(new LineBorder(new Color(160, 160, 160)));
+        toolButtons.get(0).setBorder(new LineBorder(new Color(255, 255, 255)));
     }
 
     protected void addDragListeners()
     {
-        final ToolPanel handle = this;
-
         addMouseMotionListener(new MouseAdapter() {
 
             @Override

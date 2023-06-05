@@ -1,0 +1,8 @@
+SHAPE, 352, 257, 148, 74, ./src/res/loop_limit.png, null
+SHAPE, 352, 159, 148, 74, ./src/res/manual_loop.png, null
+SHAPE, 372, 56, 148, 74, ./src/res/documents.png, 255, 0, 0, 255
+SHAPE, 618, 198, 148, 74, ./src/res/terminator.png, null
+SHAPE, 694, 98, 74, 74, ./src/res/off_page_connector.png, null
+SHAPE, 620, 327, 74, 74, ./src/res/merge.png, null
+SHAPE, 554, 82, 74, 74, ./src/res/and.png, null
+SHAPE, 841, 198, 74, 74, ./src/res/database.png, null

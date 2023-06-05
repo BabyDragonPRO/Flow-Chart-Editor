@@ -24,44 +24,17 @@ public class OpenFileAction extends AbstractAction
 
         try {
             scanner = new Scanner(file);
-
-            for (EditableImage img : parent.chartObjects)
-                parent.remove(img);
-
-            parent.chartObjects.clear();
-            parent.selectedObjects.clear();
-
-            boolean checkingShapes = false;
+            parent.clearWorkspace();
 
             while(scanner.hasNextLine())
             {
                 String raw = scanner.nextLine();
-
-                if (checkingShapes)
-                {
-                    String output[] = (raw).replace(" ", "").split(",", 0);
-                    Color color = null;
-
-                    if (output.length == 9)
-                        color = new Color(Integer.parseInt(output[5]), Integer.parseInt(output[6]),
-                                Integer.parseInt(output[7]), Integer.parseInt(output[8]));
-
-                    EditableImage object = new EditableImage(Integer.parseInt(output[0]), Integer.parseInt(output[1]),
-                            Integer.parseInt(output[2]), Integer.parseInt(output[3]), parent, output[4], color);
-
-                    parent.chartObjects.add(object);
-                    parent.add(object);
-
-                    if (parent.currentTool == Tool.SELECTION)
-                        object.setSelectable(true);
-                }
-
-                if (!checkingShapes && raw.equals("SHAPES"))
-                    checkingShapes = true;
+                String[] output = (raw).replace(" ", "").split(",", 0);
+                if (output[0].equals("SHAPE"))
+                    loadShape(output);
             }
 
             parent.repaint();
-
             scanner.close();
         }
 
@@ -73,10 +46,30 @@ public class OpenFileAction extends AbstractAction
         }
     }
 
+    private void loadShape(String[] output)
+    {
+        Color color = null;
+
+        if (output.length == 10)
+            color = new Color(Integer.parseInt(output[6]), Integer.parseInt(output[7]),
+                    Integer.parseInt(output[8]), Integer.parseInt(output[9]));
+
+        EditableImage object = new EditableImage(Integer.parseInt(output[1]), Integer.parseInt(output[2]),
+                Integer.parseInt(output[3]), Integer.parseInt(output[4]), parent, output[5], color);
+
+        parent.chartObjects.add(object);
+        parent.add(object);
+
+        if (parent.currentTool == Tool.SELECTION)
+            object.setSelectable(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
         JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FlowchartFilter());
+        fc.setAcceptAllFileFilterUsed(false);
 
         int val = fc.showOpenDialog(parent);
         if (val == JFileChooser.APPROVE_OPTION)

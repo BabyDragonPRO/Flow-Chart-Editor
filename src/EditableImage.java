@@ -13,7 +13,6 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     private final EditableImage handle;
 
     protected Image image;
-    protected Image coloredImage;
     protected Color color;
     protected String path;
     protected EditorGUI panel;
@@ -35,9 +34,6 @@ public class EditableImage extends DraggableComponent implements ImageObserver
                 this.color = color;
                 dye(color);
             }
-
-            else
-                coloredImage = image;
         }
 
         catch (IOException e)
@@ -63,7 +59,7 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     public void setColor(Color color)
     {
         if (color == null)
-            coloredImage = image;
+            dye(Color.WHITE);
 
         else
             dye(color);
@@ -82,7 +78,7 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         g.setColor(color);
         g.fillRect(0, 0, w, h);
         g.dispose();
-        coloredImage = dyed;
+        image = dyed;
     }
 
     public void setSelectable(boolean s)
@@ -107,6 +103,9 @@ public class EditableImage extends DraggableComponent implements ImageObserver
                 panel.unselectObjects();
                 mesh = new ResizeMesh(panel, handle);
                 panel.setComponentZOrder(handle, panel.getComponentCount() - 1);
+                panel.selectedObjects.add(handle);
+                panel.menuBar.changeColorAction.setEnabled(true);
+                panel.menuBar.transformAction.setEnabled(true);
 
                 setBorder(new LineBorder(Color.BLUE));
                 setDraggable(true);
@@ -155,8 +154,8 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        if (coloredImage != null)
-            g2d.drawImage(coloredImage, 0, 0, getWidth(), getHeight(), this);
+        if (image != null)
+            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
         else
         {

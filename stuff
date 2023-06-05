@@ -1,8 +1,0 @@
-SHAPES
-399, 184, 100, 100, ./src/res/test.png, null
-768, 128, 100, 100, ./src/res/test.png, null
-839, 464, 100, 100, ./src/res/test.png, null
-621, 245, 100, 100, ./src/res/test.png, 128, 0, 64, 32
-518, 438, 100, 100, ./src/res/test.png, null
-273, 351, 100, 100, ./src/res/test.png, null
-569, 82, 100, 100, ./src/res/test.png, null
