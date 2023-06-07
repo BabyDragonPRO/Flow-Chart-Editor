@@ -50,12 +50,13 @@ public class OpenFileAction extends AbstractAction
     {
         Color color = null;
 
-        if (output.length == 10)
-            color = new Color(Integer.parseInt(output[6]), Integer.parseInt(output[7]),
-                    Integer.parseInt(output[8]), Integer.parseInt(output[9]));
+        if (output.length == 11)
+            color = new Color(Integer.parseInt(output[7]), Integer.parseInt(output[8]),
+                    Integer.parseInt(output[9]), Integer.parseInt(output[10]));
 
         EditableImage object = new EditableImage(Integer.parseInt(output[1]), Integer.parseInt(output[2]),
-                Integer.parseInt(output[3]), Integer.parseInt(output[4]), parent, output[5], color);
+                Integer.parseInt(output[3]), Integer.parseInt(output[4]), parent, output[5],
+                Integer.parseInt(output[6]), color);
 
         parent.chartObjects.add(object);
         parent.add(object);

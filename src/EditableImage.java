@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -13,13 +14,15 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     private final EditableImage handle;
 
     protected Image image;
+    protected Image baseImage;
     protected Color color;
     protected String path;
     protected EditorGUI panel;
     protected ResizeMesh mesh;
     protected boolean selectable = false;
+    protected int rotation;
 
-    public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path, Color color)
+    public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path, int rotation, Color color)
     {
         super(x, y, width, height);
         handle = this;
@@ -27,6 +30,7 @@ public class EditableImage extends DraggableComponent implements ImageObserver
 
         try {
             image = ImageIO.read(new File(path));
+            baseImage = image;
             this.path = path;
 
             if (color != null)
@@ -34,6 +38,8 @@ public class EditableImage extends DraggableComponent implements ImageObserver
                 this.color = color;
                 dye(color);
             }
+
+            setRotation(rotation);
         }
 
         catch (IOException e)
@@ -56,18 +62,52 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         return color;
     }
 
+    public int getRotation()
+    {
+        return rotation;
+    }
+
     public void setColor(Color color)
     {
         if (color == null)
             dye(Color.WHITE);
 
-        else
+        else if (this.color != color)
             dye(color);
 
         this.color = color;
     }
 
-    public void dye(Color color)
+    public void setRotation(int rotation)
+    {
+        if (this.rotation != rotation)
+            rotate(rotation);
+
+        this.rotation = rotation;
+    }
+
+    private void rotate(int rotation)
+    {
+        image = baseImage;
+        dye(color);
+        double sin = Math.abs(Math.sin(Math.toRadians(rotation)));
+        double cos = Math.abs(Math.cos(Math.toRadians(rotation)));
+        int w = image.getWidth(this);
+        int h = image.getHeight(this);
+        int newW = (int) Math.floor(w * cos + h * sin);
+        int newH = (int) Math.floor(h * cos + w * sin);
+        BufferedImage result = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = result.createGraphics();
+        g.translate((newW - w) / 2, (newH - h) / 2);
+        g.rotate(Math.toRadians(rotation), w / 2, h / 2);
+        g.drawRenderedImage((RenderedImage) image, null);
+        g.dispose();
+        image = result;
+        setSize((int) (Math.abs(getWidth() * cos) + Math.abs(getHeight() * sin)),
+                (int) (Math.abs(getWidth() * sin) + Math.abs(getHeight() * cos)));
+    }
+
+    private void dye(Color color)
     {
         int w = image.getWidth(this);
         int h = image.getHeight(this);

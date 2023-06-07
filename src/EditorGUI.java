@@ -127,7 +127,6 @@ public class EditorGUI extends JPanel
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("SSS");
                 unselectObjects();
             }
         });
@@ -176,7 +175,7 @@ public class EditorGUI extends JPanel
                 Point point = e.getPoint();
                 boolean isHalfWidth = tool.ordinal() > Tool.STORED_DATA.ordinal();
                 chartObjects.add(new EditableImage(point.x - (isHalfWidth ? 37 : 74), point.y - 37, isHalfWidth ? 74 : 148,
-                        74, handle, tool.getShapePath(), null));
+                        74, handle, tool.getShapePath(), 0, null));
                 handle.add(chartObjects.get(chartObjects.size() - 1));
                 repaint();
             }
