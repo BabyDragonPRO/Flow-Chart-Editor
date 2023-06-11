@@ -9,7 +9,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class EditableImage extends DraggableComponent implements ImageObserver
+public class EditableImage extends JComponent implements Selectable, ImageObserver
 {
     private final EditableImage handle;
 
@@ -17,16 +17,18 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     protected Image baseImage;
     protected Color color;
     protected String path;
+    protected Point anchor;
+    protected Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
     protected EditorGUI panel;
     protected ResizeMesh mesh;
     protected boolean selectable = false;
+    protected boolean draggable = true;
     protected int rotation;
 
     public EditableImage(int x, int y, int width, int height, EditorGUI panel, String path, int rotation, Color color)
     {
-        super(x, y, width, height);
         handle = this;
-        setDraggable(false);
+        setBounds(x, y, width, height);
 
         try {
             image = ImageIO.read(new File(path));
@@ -65,6 +67,11 @@ public class EditableImage extends DraggableComponent implements ImageObserver
     public int getRotation()
     {
         return rotation;
+    }
+
+    public boolean intersects(Rectangle rect)
+    {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight()).intersects(rect);
     }
 
     public void setColor(Color color)
@@ -135,7 +142,25 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         selectable = s;
     }
 
-    protected void addClickListeners()
+    public void setDraggable(boolean d)
+    {
+        if (draggable != d)
+        {
+            if (d)
+                addDragListeners();
+            else
+            {
+                if (mesh != null)
+                    mesh.deleteMesh();
+                setBorder(null);
+                removeDragListeners();
+            }
+        }
+
+        draggable = d;
+    }
+
+    public void addClickListeners()
     {
         addMouseListener(new MouseAdapter() {
             @Override
@@ -156,36 +181,65 @@ public class EditableImage extends DraggableComponent implements ImageObserver
         });
     }
 
-    protected void removeClickListeners()
+    public void removeClickListeners()
     {
         for (MouseListener listener : getMouseListeners())
             removeMouseListener(listener);
     }
 
-    @Override
-    protected void addDragListeners() {
-        super.addDragListeners();
+    public void addDragListeners() {
+        addMouseMotionListener(new MouseAdapter() {
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                anchor = e.getPoint();
+                setCursor(draggingCursor);
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Point parent = getParent().getLocationOnScreen();
+                Point mouse = e.getLocationOnScreen();
+                Point position = new Point(mouse.x - parent.x - anchor.x,
+                        mouse.y - parent.y - anchor.y);
+                setLocation(position);
+            }
+        });
 
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteObject");
         getActionMap().put("deleteObject", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (EditableImage object : panel.chartObjects)
+                for (Selectable object : panel.chartObjects)
                     object.setSelectable(true);
 
-                handle.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "none");
-                mesh.deleteMesh();
-                panel.remove(handle);
+                panel.chartObjects.remove(handle);
+                panel.selectedObjects.remove(handle);
+                handle.deleteObject();
                 panel.repaint();
             }
         });
     }
 
-    @Override
-    protected void removeDragListeners() {
-        super.removeDragListeners();
+    public void removeDragListeners() {
+        for (MouseMotionListener listener : getMouseMotionListeners())
+            removeMouseMotionListener(listener);
 
+        setCursor(Cursor.getDefaultCursor());
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "none");
+    }
+
+    public void setDraggingCursor(Cursor cursor)
+    {
+        draggingCursor = cursor;
+    }
+
+    public void deleteObject()
+    {
+        if (mesh != null)
+            mesh.deleteMesh();
+
+        panel.remove(this);
     }
 
     @Override

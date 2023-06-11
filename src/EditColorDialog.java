@@ -83,7 +83,7 @@ public class EditColorDialog extends JDialog
 
     private void addDocumentsListeners()
     {
-        this.txtRed.getDocument().addDocumentListener(new DocumentListener() {
+        txtRed.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -95,7 +95,7 @@ public class EditColorDialog extends JDialog
             }
         });
 
-        this.txtBlue.getDocument().addDocumentListener(new DocumentListener() {
+        txtBlue.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -107,7 +107,7 @@ public class EditColorDialog extends JDialog
             }
         });
 
-        this.txtBlue.getDocument().addDocumentListener(new DocumentListener() {
+        txtBlue.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -132,7 +132,7 @@ public class EditColorDialog extends JDialog
         int red = Integer.parseInt(txtRed.getText());
         int green = Integer.parseInt(txtGreen.getText());
         int blue = Integer.parseInt(txtBlue.getText());
-        parent.selectedObjects.get(0).setColor(new Color(red, green, blue));
+        ((EditableImage)parent.selectedObjects.get(0)).setColor(new Color(red, green, blue));
         parent.repaint();
     }
 

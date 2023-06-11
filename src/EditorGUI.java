@@ -10,12 +10,12 @@ public class EditorGUI extends JPanel
     private Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
     private final EditorGUI handle;
+    private final JFrame frame;
     protected EditorMenuBar menuBar;
     protected ToolPanel toolPanel;
-    protected LayerPanel layerPanel;
-    public ArrayList<EditableImage> chartObjects;
-    public ArrayList<EditableImage> selectedObjects;
-    public ArrayList<ArrowComponent> arrows;
+    public ArrayList<Selectable> chartObjects;
+    public ArrayList<Selectable> selectedObjects;
+    public ArrayList<Point> buildingArrow;
     public Tool currentTool;
 
     private Point selectionAnchor;
@@ -31,18 +31,31 @@ public class EditorGUI extends JPanel
     private final AbstractAction clearSelectionAreaAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (EditableImage object : selectedObjects)
+            for (Selectable object : selectedObjects)
             {
                 object.removeDragListeners();
                 object.setBorder(null);
             }
         }
     };
+    private final AbstractAction deleteArrowAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            buildingArrow.clear();
+            repaint();
+        }
+    };
+    private final AbstractAction finishArrowAction = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            finishArrow();
+        }
+    };
     private final AbstractAction deleteObjectsAction = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (EditableImage object : selectedObjects)
-                handle.remove(object);
+            for (Selectable object : selectedObjects)
+                object.deleteObject();
 
             selectedObjects.clear();
             repaint();
@@ -78,6 +91,7 @@ public class EditorGUI extends JPanel
     public EditorGUI(JFrame frame)
     {
         handle = this;
+        this.frame = frame;
         setBackground(new Color(240, 240, 240));
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(null);
@@ -85,6 +99,7 @@ public class EditorGUI extends JPanel
 
         chartObjects = new ArrayList<>();
         selectedObjects = new ArrayList<>();
+        buildingArrow = new ArrayList<>();
 
         toolPanel = new ToolPanel(10, 10, this);
 
@@ -110,6 +125,14 @@ public class EditorGUI extends JPanel
                     addSelectAreaListeners();
                 }
 
+                case LABEL -> {
+                    addCreateLabelListeners();
+                }
+
+                case ARROW -> {
+                    addCreateArrowListeners();
+                }
+
                 default -> {
                     addCreateObjectListener(tool);
                 }
@@ -121,7 +144,7 @@ public class EditorGUI extends JPanel
 
     private void addSelectionListeners()
     {
-        for (EditableImage object : chartObjects)
+        for (Selectable object : chartObjects)
             object.setSelectable(true);
 
         addMouseListener(new MouseAdapter() {
@@ -167,6 +190,35 @@ public class EditorGUI extends JPanel
         });
     }
 
+    private void addCreateLabelListeners()
+    {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point point = e.getPoint();
+                Dialog dialog = new CreateLabelDialog(frame, handle, point.x, point.y);
+            }
+        });
+    }
+
+    private void addCreateArrowListeners()
+    {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                buildingArrow.add(e.getPoint());
+                repaint();
+            }
+        });
+
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteArrow");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE), "deleteArrow");
+        getActionMap().put("deleteArrow", deleteArrowAction);
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_ENTER), "finishArrow");
+        getActionMap().put("finishArrow", finishArrowAction);
+    }
+
     private void addCreateObjectListener(Tool tool)
     {
         addMouseListener(new MouseAdapter() {
@@ -176,7 +228,7 @@ public class EditorGUI extends JPanel
                 boolean isHalfWidth = tool.ordinal() > Tool.STORED_DATA.ordinal();
                 chartObjects.add(new EditableImage(point.x - (isHalfWidth ? 37 : 74), point.y - 37, isHalfWidth ? 74 : 148,
                         74, handle, tool.getShapePath(), 0, null));
-                handle.add(chartObjects.get(chartObjects.size() - 1));
+                handle.add((JComponent) chartObjects.get(chartObjects.size() - 1));
                 repaint();
             }
         });
@@ -187,21 +239,23 @@ public class EditorGUI extends JPanel
         if (currentTool == Tool.SELECTION)
         {
             unselectObjects();
-            for (EditableImage object : chartObjects)
+            for (Selectable object : chartObjects)
                 object.setSelectable(false);
         }
-
         if (currentTool == Tool.SELECT_AREA)
         {
-            for (EditableImage object : selectedObjects)
+            for (Selectable object : selectedObjects)
             {
                 object.removeDragListeners();
                 object.setBorder(null);
             }
         }
+        if (currentTool == Tool.ARROW)
+            finishArrow();
 
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_ENTER), "none");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "none");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((char) KeyEvent.VK_ESCAPE), "none");
 
         for (MouseListener listener : getMouseListeners())
             removeMouseListener(listener);
@@ -215,13 +269,14 @@ public class EditorGUI extends JPanel
         selectedObjects.clear();
         menuBar.changeColorAction.setEnabled(false);
         menuBar.transformAction.setEnabled(false);
+        menuBar.editLabelAction.setEnabled(false);
 
-        for (EditableImage object : chartObjects)
+        for (Selectable object : chartObjects)
         {
             object.setDraggable(false);
             object.setSelectable(true);
-            if (object.mesh != null)
-                object.mesh.deleteMesh();
+            if (object instanceof EditableImage obj && obj.mesh != null)
+                obj.mesh.deleteMesh();
         }
     }
 
@@ -229,14 +284,12 @@ public class EditorGUI extends JPanel
     {
         selectedObjects.clear();
 
-        for (EditableImage object : chartObjects)
+        for (Selectable object : chartObjects)
         {
-            object.setBorder(null);
             object.removeDragListeners();
-
-            Rectangle rect1 = new Rectangle(object.getX(), object.getY(), object.getWidth(), object.getHeight());
-            Rectangle rect2 = getSelectionArea(selectionStart.x ,selectionStart.y, selectionEnd.x, selectionEnd.y);
-            if (rect1.intersects(rect2))
+            object.setBorder(null);
+            Rectangle rect = getSelectionArea(selectionStart.x ,selectionStart.y, selectionEnd.x, selectionEnd.y);
+            if (object.intersects(rect))
                 addToSelectedObjects(object);
         }
 
@@ -244,28 +297,42 @@ public class EditorGUI extends JPanel
         repaint();
     }
 
-    private void addToSelectedObjects(EditableImage object)
+    private void addToSelectedObjects(Selectable obj)
     {
-        selectedObjects.add(object);
-        object.setBorder(new LineBorder(Color.BLUE));
-        object.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                selectionAnchor = e.getPoint();
-                object.setCursor(draggingCursor);
-            }
+        if (obj instanceof JComponent object)
+        {
+            selectedObjects.add(obj);
+            object.setBorder(new LineBorder(Color.BLUE));
+            object.addMouseMotionListener(new MouseAdapter() {
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    selectionAnchor = e.getPoint();
+                    object.setCursor(draggingCursor);
+                }
 
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                Point parent = getParent().getLocationOnScreen();
-                Point mouse = e.getLocationOnScreen();
-                int xChange = mouse.x - parent.x - selectionAnchor.x - object.getX();
-                int yChange = mouse.y - parent.y - selectionAnchor.y - object.getY();
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    Point parent = getParent().getLocationOnScreen();
+                    Point mouse = e.getLocationOnScreen();
+                    int xChange = mouse.x - parent.x - selectionAnchor.x - object.getX();
+                    int yChange = mouse.y - parent.y - selectionAnchor.y - object.getY();
 
-                for (EditableImage obj : selectedObjects)
-                    obj.setLocation(obj.getX() + xChange, obj.getY() + yChange);
-            }
-        });
+                    for (Selectable selected : selectedObjects)
+                    {
+                        selected.setLocation(selected.getX() + xChange, selected.getY() + yChange);
+                        if (selected instanceof ArrowComponent arrow)
+                        {
+                            for (Point point : arrow.points)
+                            {
+                                point.x += xChange;
+                                point.y += yChange;
+                            }
+                        }
+                    }
+                    repaint();
+                }
+            });
+        }
     }
 
     private Rectangle getSelectionArea(int x1, int y1, int x2, int y2)
@@ -290,6 +357,14 @@ public class EditorGUI extends JPanel
         return new Rectangle(x, y, width, height);
     }
 
+    private void finishArrow()
+    {
+        if (buildingArrow.size() > 1)
+            chartObjects.add(new ArrowComponent(this, (ArrayList<Point>) buildingArrow.clone()));
+        buildingArrow.clear();
+        repaint();
+    }
+
     private void drawSelectionArea(Graphics g)
     {
         Rectangle selection = getSelectionArea(selectionStart.x ,selectionStart.y, selectionEnd.x, selectionEnd.y);
@@ -304,19 +379,50 @@ public class EditorGUI extends JPanel
         g2d.drawRect(selection.x, selection.y, selection.width, selection.height);
     }
 
+    private void drawArrowhead(Graphics2D g, int d, int h) {
+        int x1 = buildingArrow.get(buildingArrow.size() - 2).x;
+        int y1 = buildingArrow.get(buildingArrow.size() - 2).y;
+        int x2 = buildingArrow.get(buildingArrow.size() - 1).x;
+        int y2 = buildingArrow.get(buildingArrow.size() - 1).y;
+        int dx = x2 - x1, dy = y2 - y1;
+        double D = Math.sqrt(dx * dx + dy * dy);
+        double xm = D - d, xn = xm, ym = h, yn = -h, x;
+        double sin = dy / D, cos = dx / D;
+
+        x = xm * cos - ym * sin + x1;
+        ym = xm * sin + ym * cos + y1;
+        xm = x;
+
+        x = xn * cos - yn * sin + x1;
+        yn = xn * sin + yn * cos + y1;
+        xn = x;
+
+        int[] xPoints = {x2, (int) xm, (int) xn};
+        int[] yPoints = {y2, (int) ym, (int) yn};
+
+        g.fillPolygon(xPoints, yPoints, 3);
+    }
+
+    private void drawArrow(Graphics g)
+    {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(3f));
+        for (int i = 1; i < buildingArrow.size(); i++)
+            g2d.drawLine(buildingArrow.get(i - 1).x, buildingArrow.get(i - 1).y,
+                    buildingArrow.get(i).x, buildingArrow.get(i).y);
+
+        drawArrowhead(g2d, 20, 10);
+    }
+
     public void clearWorkspace()
     {
-        for (EditableImage object : chartObjects)
-        {
-            if (object.mesh != null)
-                object.mesh.deleteMesh();
-
-            remove(object);
-        }
+        for (Selectable object : chartObjects)
+            object.deleteObject();
 
         chartObjects.clear();
         selectedObjects.clear();
-
+        buildingArrow.clear();
         repaint();
     }
 
@@ -324,7 +430,14 @@ public class EditorGUI extends JPanel
     public void paint(Graphics g)
     {
         super.paint(g);
+        for (Selectable s : chartObjects)
+            if (s instanceof ArrowComponent arrow)
+                arrow.paintArrow(g);
+
         if (selectionEnd != null)
             drawSelectionArea(g);
+
+        if (buildingArrow.size() > 1)
+            drawArrow(g);
     }
 }

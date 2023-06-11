@@ -67,11 +67,12 @@ public class TransformDialog extends JDialog
 
     private void setControls()
     {
-        txtX.setText(String.valueOf(parent.selectedObjects.get(0).getX()));
-        txtY.setText(String.valueOf(parent.selectedObjects.get(0).getY()));
-        txtWidth.setText(String.valueOf(parent.selectedObjects.get(0).getWidth()));
-        txtHeight.setText(String.valueOf(parent.selectedObjects.get(0).getHeight()));
-        txtRotation.setText(String.valueOf(parent.selectedObjects.get(0).getRotation()));
+        EditableImage obj = (EditableImage) parent.selectedObjects.get(0);
+        txtX.setText(String.valueOf(obj.getX()));
+        txtY.setText(String.valueOf(obj.getY()));
+        txtWidth.setText(String.valueOf(obj.getWidth()));
+        txtHeight.setText(String.valueOf(obj.getHeight()));
+        txtRotation.setText(String.valueOf(obj.getRotation()));
         txtX.setForeground(Color.BLACK);
         txtY.setForeground(Color.BLACK);
         txtWidth.setForeground(Color.BLACK);
@@ -108,7 +109,7 @@ public class TransformDialog extends JDialog
 
     private void addDocumentsListeners()
     {
-        this.txtX.getDocument().addDocumentListener(new DocumentListener() {
+        txtX.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -120,7 +121,7 @@ public class TransformDialog extends JDialog
             }
         });
 
-        this.txtY.getDocument().addDocumentListener(new DocumentListener() {
+        txtY.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -132,7 +133,7 @@ public class TransformDialog extends JDialog
             }
         });
 
-        this.txtWidth.getDocument().addDocumentListener(new DocumentListener() {
+        txtWidth.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -144,7 +145,7 @@ public class TransformDialog extends JDialog
             }
         });
 
-        this.txtHeight.getDocument().addDocumentListener(new DocumentListener() {
+        txtHeight.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -156,7 +157,7 @@ public class TransformDialog extends JDialog
             }
         });
 
-        this.txtRotation.getDocument().addDocumentListener(new DocumentListener() {
+        txtRotation.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 update();
             }
@@ -183,9 +184,10 @@ public class TransformDialog extends JDialog
         int width = Integer.parseInt(txtWidth.getText());
         int height = Integer.parseInt(txtHeight.getText());
         int rotation = Integer.parseInt(txtRotation.getText());
-        parent.selectedObjects.get(0).setBounds(x, y, width, height);
-        parent.selectedObjects.get(0).setRotation(rotation);
-        parent.selectedObjects.get(0).mesh.update(-1);
+        EditableImage obj = (EditableImage)parent.selectedObjects.get(0);
+        obj.setBounds(x, y, width, height);
+        obj.setRotation(rotation);
+        obj.mesh.update(-1);
         parent.repaint();
     }
 

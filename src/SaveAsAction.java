@@ -20,7 +20,7 @@ public class SaveAsAction extends AbstractAction
         this.parent = parent;
     }
 
-    private void saveToFile(File file, EditorGUI parent)
+    private void saveToFile(File file)
     {
         BufferedWriter bw = null;
 
@@ -29,15 +29,14 @@ public class SaveAsAction extends AbstractAction
 
             if (parent.chartObjects.size() > 0)
             {
-                for (EditableImage object : parent.chartObjects)
+                for (Selectable object : parent.chartObjects)
                 {
-                    String s = "null";
-                    Color color = object.getColor();
-                    if (color != null)
-                        s = String.format("%d, %d, %d, %d", color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-
-                    bw.write(String.format("SHAPE, %d, %d, %d, %d, %s, %s\r\n", object.getX(), object.getY(),
-                            object.getWidth(), object.getHeight(), object.getPath(), s));
+                    if (object instanceof EditableImage image)
+                        saveShape(image, bw);
+                    else if (object instanceof DraggableLabel label)
+                        saveLabel(label, bw);
+                    else if (object instanceof ArrowComponent arrow)
+                        saveArrow(arrow, bw);
                 }
             }
         }
@@ -56,6 +55,38 @@ public class SaveAsAction extends AbstractAction
         }
     }
 
+    private void saveShape(EditableImage object, BufferedWriter bw) throws IOException
+    {
+        String s = "null";
+        Color color = object.getColor();
+        if (color != null)
+            s = String.format("%d, %d, %d, %d", color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+
+        bw.write(String.format("SHAPE, %d, %d, %d, %d, %s, %d, %s\r\n", object.getX(), object.getY(),
+                object.getWidth(), object.getHeight(), object.getPath(), object.getRotation(), s));
+    }
+
+    private void saveArrow(ArrowComponent object, BufferedWriter bw) throws IOException
+    {
+        StringBuilder s = new StringBuilder("ARROW");
+        for (Point p : object.points)
+        {
+            s.append(", ");
+            s.append(p.x);
+            s.append(", ");
+            s.append(p.y);
+        }
+
+        s.append("\r\n");
+        bw.write(s.toString());
+    }
+
+    private void saveLabel(DraggableLabel object, BufferedWriter bw) throws IOException
+    {
+        bw.write(String.format("LABEL, %d, %d, %d, %s\r\n", object.getX(), object.getY(),
+                object.getFont().getSize(), object.getText()));
+    }
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -69,9 +100,9 @@ public class SaveAsAction extends AbstractAction
             File selected = fc .getSelectedFile();
 
             if (selected.getName().endsWith(".flowchart"))
-                saveToFile(selected, parent);
+                saveToFile(selected);
             else
-                saveToFile(new File(selected.getPath() + ".flowchart"), parent);
+                saveToFile(new File(selected.getPath() + ".flowchart"));
         }
     }
 }

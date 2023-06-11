@@ -1,8 +1,28 @@
-SHAPE, 352, 257, 148, 74, ./src/res/loop_limit.png, null
-SHAPE, 352, 159, 148, 74, ./src/res/manual_loop.png, null
-SHAPE, 372, 56, 148, 74, ./src/res/documents.png, 255, 0, 0, 255
-SHAPE, 618, 198, 148, 74, ./src/res/terminator.png, null
-SHAPE, 694, 98, 74, 74, ./src/res/off_page_connector.png, null
-SHAPE, 620, 327, 74, 74, ./src/res/merge.png, null
-SHAPE, 554, 82, 74, 74, ./src/res/and.png, null
-SHAPE, 841, 198, 74, 74, ./src/res/database.png, null
+SHAPE, 788, 537, 148, 74, ./src/res/terminator.png, 0, 255, 0, 0, 255
+SHAPE, 394, 178, 148, 74, ./src/res/decision.png, 0, 160, 0, 255, 255
+SHAPE, 388, 344, 148, 74, ./src/res/documents.png, 0, 0, 255, 0, 255
+SHAPE, 650, 359, 148, 74, ./src/res/subroutine.png, 0, 255, 180, 0, 255
+SHAPE, 699, 219, 74, 74, ./src/res/off_page_connector.png, 0, null
+SHAPE, 272, 488, 74, 74, ./src/res/sort.png, 0, 0, 50, 200, 255
+SHAPE, 443, 473, 74, 74, ./src/res/and.png, 0, 100, 255, 255, 255
+SHAPE, 623, 483, 74, 74, ./src/res/database.png, 0, 0, 100, 200, 255
+SHAPE, 210, 376, 74, 74, ./src/res/internal_storage.png, 0, 0, 100, 255, 255
+SHAPE, 553, 251, 74, 74, ./src/res/or.png, 0, null
+LABEL, 236, 408, 11, Stiff
+LABEL, 427, 196, 32, Oopss
+LABEL, 427, 376, 16, sadasdsa
+LABEL, 706, 237, 11, asdas
+LABEL, 669, 366, 46, sadas
+ARROW, 469, 251, 469, 344
+ARROW, 283, 405, 389, 396
+ARROW, 246, 451, 247, 525, 273, 525
+ARROW, 347, 525, 446, 527
+ARROW, 474, 404, 476, 472
+ARROW, 937, 580, 981, 582, 965, 85, 475, 90, 469, 181
+ARROW, 394, 213, 250, 218, 246, 375
+ARROW, 539, 211, 590, 207, 589, 247
+ARROW, 537, 376, 648, 391
+ARROW, 662, 556, 663, 588, 788, 580
+ARROW, 798, 392, 859, 393, 859, 535
+ARROW, 737, 293, 737, 355
+ARROW, 518, 509, 629, 520

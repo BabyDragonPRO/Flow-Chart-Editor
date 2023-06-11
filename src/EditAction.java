@@ -21,7 +21,14 @@ public class EditAction extends AbstractAction
     @Override
     public boolean isEnabled()
     {
-        return parent.currentTool == Tool.SELECTION && parent.selectedObjects.size() == 1;
+        if (mode == 0 || mode == 1)
+            return parent.currentTool == Tool.SELECTION && parent.selectedObjects.size() == 1
+                    && parent.selectedObjects.get(0) instanceof EditableImage;
+        else if (mode == 2)
+            return parent.currentTool == Tool.SELECTION && parent.selectedObjects.size() == 1
+                    && parent.selectedObjects.get(0) instanceof DraggableLabel;
+
+        return false;
     }
 
     @Override
@@ -32,5 +39,8 @@ public class EditAction extends AbstractAction
 
         else if (mode == 1)
             actionDialog = new TransformDialog(frame, parent);
+
+        else if (mode == 2)
+            actionDialog = new EditLabelDialog(frame, parent);
     }
 }

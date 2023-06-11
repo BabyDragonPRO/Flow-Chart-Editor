@@ -2,6 +2,8 @@ public enum Tool
 {
     SELECTION("selection", "Can select and move objects around"),
     SELECT_AREA("select_area", "Selects objects in an area"),
+    LABEL("label", "Add a label"),
+    ARROW("arrow", "Add an arrow"),
     TERMINATOR("terminator", "Indicates the beginning or end of a program flow in the flowchart"),
     PROCESS("process", "Indicates any processing function"),
     DECISION("decision", "Indicates a decision point between two or more paths in a flowchart"),

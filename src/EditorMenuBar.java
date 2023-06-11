@@ -8,14 +8,15 @@ public class EditorMenuBar implements ItemListener
 {
     private JMenuBar mb;
     private JMenu fileMenu, windowMenu, editMenu;
-    private JMenuItem newFile, open, saveAs, color, transform;
+    private JMenuItem newFile, open, saveAs, export, color, transform, editLabel;
     private JCheckBoxMenuItem toolBar;
 
     private NewFileAction newFileAction;
     private OpenFileAction openFileAction;
     private SaveAsAction saveAsAction;
+    private ExportAction exportAction;
     private ShowPanelAction showToolBarAction;
-    protected EditAction changeColorAction, transformAction;
+    protected EditAction changeColorAction, transformAction, editLabelAction;
 
     public EditorMenuBar(EditorGUI parent, JFrame frame)
     {
@@ -30,6 +31,8 @@ public class EditorMenuBar implements ItemListener
         open = new JMenuItem(openFileAction);
         saveAsAction = new SaveAsAction(parent);
         saveAs = new JMenuItem(saveAsAction);
+        exportAction = new ExportAction(frame, parent);
+        export = new JMenuItem(exportAction);
         showToolBarAction = new ShowPanelAction(parent.toolPanel, "Tool Bar", "Show/Hide the tool bar");
         toolBar = new JCheckBoxMenuItem(showToolBarAction);
         toolBar.setSelected(true);
@@ -44,13 +47,17 @@ public class EditorMenuBar implements ItemListener
         color = new JMenuItem(changeColorAction);
         transformAction = new EditAction(frame, parent, 1, "Transform", "Transform the object");
         transform = new JMenuItem(transformAction);
+        editLabelAction = new EditAction(frame, parent, 2, "Edit Label", "Edit selected label");
+        editLabel = new JMenuItem(editLabelAction);
 
         fileMenu.add(newFile);
         fileMenu.add(open);
         fileMenu.add(saveAs);
+        fileMenu.add(export);
         windowMenu.add(toolBar);
         editMenu.add(color);
         editMenu.add(transform);
+        editMenu.add(editLabel);
         mb.add(fileMenu);
         mb.add(windowMenu);
         mb.add(editMenu);

@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-public class DraggableComponent extends JComponent
+public class DraggableButton extends JComponent
 {
     protected Point anchor;
     protected Cursor draggingCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
@@ -12,13 +12,13 @@ public class DraggableComponent extends JComponent
     protected boolean xLocked = false;
     protected boolean yLocked = false;
 
-    public DraggableComponent(int x, int y, int width, int height)
+    public DraggableButton(int x, int y, int width, int height)
     {
         setBounds(x, y, width, height);
         addDragListeners();
     }
 
-    public DraggableComponent(int x, int y, int width, int height, Color color)
+    public DraggableButton(int x, int y, int width, int height, Color color)
     {
         this(x, y, width, height);
         setBackground(color);

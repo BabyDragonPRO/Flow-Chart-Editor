@@ -19,6 +19,11 @@ public class TextWHintField extends JTextField implements FocusListener
         super.addFocusListener(this);
     }
 
+    public String getHint()
+    {
+        return hint;
+    }
+
     @Override
     public void focusGained(FocusEvent e)
     {

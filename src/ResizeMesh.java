@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,23 +9,30 @@ public class ResizeMesh
     private final EditorGUI panel;
     private final JComponent parent;
 
-    private ArrayList<DraggableComponent> buttons;
+    private ArrayList<DraggableButton> buttons;
 
     public ResizeMesh(EditorGUI panel, JComponent parent)
     {
         this.panel = panel;
         this.parent = parent;
 
+        addButtons();
+        addListeners();
+        panel.repaint();
+    }
+
+    private void addButtons()
+    {
         buttons = new ArrayList<>();
 
-        buttons.add(new DraggableComponent(parent.getX() - 5, parent.getY() - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() + parent.getWidth() / 2 - 5, parent.getY() - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() + parent.getWidth() - 5, parent.getY() - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() + parent.getWidth() - 5, parent.getY() + parent.getHeight() / 2 - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() + parent.getWidth() - 5, parent.getY() + parent.getHeight() - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() + parent.getWidth() / 2 - 5, parent.getY() + parent.getHeight() - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() - 5, parent.getY() + parent.getHeight() - 5, 10, 10, Color.BLUE));
-        buttons.add(new DraggableComponent(parent.getX() - 5, parent.getY() + parent.getHeight() / 2 - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() - 5, parent.getY() - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() + parent.getWidth() / 2 - 5, parent.getY() - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() + parent.getWidth() - 5, parent.getY() - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() + parent.getWidth() - 5, parent.getY() + parent.getHeight() / 2 - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() + parent.getWidth() - 5, parent.getY() + parent.getHeight() - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() + parent.getWidth() / 2 - 5, parent.getY() + parent.getHeight() - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() - 5, parent.getY() + parent.getHeight() - 5, 10, 10, Color.BLUE));
+        buttons.add(new DraggableButton(parent.getX() - 5, parent.getY() + parent.getHeight() / 2 - 5, 10, 10, Color.BLUE));
 
         buttons.get(0).setDraggingCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
         buttons.get(1).setDraggingCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
@@ -41,7 +47,10 @@ public class ResizeMesh
         buttons.get(3).setYLocked(true);
         buttons.get(5).setXLocked(true);
         buttons.get(7).setYLocked(true);
+    }
 
+    private void addListeners()
+    {
         for (int i = 0; i < 8; i++)
         {
             int finalI = i; // cannot use the i variable for some reason, says it needs to be final or something
@@ -63,8 +72,6 @@ public class ResizeMesh
                 update(-1);
             }
         });
-
-        panel.repaint();
     }
 
     public void update(int index)
@@ -124,7 +131,7 @@ public class ResizeMesh
     {
         parent.setBorder(null);
 
-        for (DraggableComponent button : buttons)
+        for (DraggableButton button : buttons)
         {
             panel.remove(button);
         }
