@@ -1,13 +1,13 @@
-SHAPE, 788, 537, 148, 74, ./src/res/terminator.png, 0, 255, 0, 0, 255
-SHAPE, 394, 178, 148, 74, ./src/res/decision.png, 0, 160, 0, 255, 255
-SHAPE, 388, 344, 148, 74, ./src/res/documents.png, 0, 0, 255, 0, 255
-SHAPE, 650, 359, 148, 74, ./src/res/subroutine.png, 0, 255, 180, 0, 255
-SHAPE, 699, 219, 74, 74, ./src/res/off_page_connector.png, 0, null
-SHAPE, 272, 488, 74, 74, ./src/res/sort.png, 0, 0, 50, 200, 255
-SHAPE, 443, 473, 74, 74, ./src/res/and.png, 0, 100, 255, 255, 255
-SHAPE, 623, 483, 74, 74, ./src/res/database.png, 0, 0, 100, 200, 255
-SHAPE, 210, 376, 74, 74, ./src/res/internal_storage.png, 0, 0, 100, 255, 255
-SHAPE, 553, 251, 74, 74, ./src/res/or.png, 0, null
+SHAPE, 788, 537, 148, 74, terminator.png, 0, 255, 0, 0, 255
+SHAPE, 394, 178, 148, 74, decision.png, 0, 160, 0, 255, 255
+SHAPE, 388, 344, 148, 74, documents.png, 0, 0, 255, 0, 255
+SHAPE, 650, 359, 148, 74, subroutine.png, 0, 255, 180, 0, 255
+SHAPE, 699, 219, 74, 74, off_page_connector.png, 0, null
+SHAPE, 272, 488, 74, 74, sort.png, 0, 0, 50, 200, 255
+SHAPE, 443, 473, 74, 74, and.png, 0, 100, 255, 255, 255
+SHAPE, 623, 483, 74, 74, database.png, 0, 0, 100, 200, 255
+SHAPE, 210, 376, 74, 74, internal_storage.png, 0, 0, 100, 255, 255
+SHAPE, 553, 251, 74, 74, or.png, 0, null
 LABEL, 236, 408, 11, Stiff
 LABEL, 427, 196, 32, Oopss
 LABEL, 427, 376, 16, sadasdsa

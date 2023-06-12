@@ -36,7 +36,7 @@ public class EditableImage extends JComponent implements Selectable, ImageObserv
         setBounds(x, y, width, height);
 
         try {
-            image = ImageIO.read(new File(path));
+            image = ImageIO.read(ClassLoader.getSystemClassLoader().getResource(path));
             baseImage = image;
             this.path = path;
 

@@ -1,0 +1,28 @@
+SHAPE, 861, 624, 148, 74, terminator.png, 0, 255, 0, 0, 255
+SHAPE, 467, 265, 148, 74, decision.png, 0, 160, 0, 255, 255
+SHAPE, 461, 431, 148, 74, documents.png, 0, 0, 255, 0, 255
+SHAPE, 723, 446, 148, 74, subroutine.png, 0, 255, 180, 0, 255
+SHAPE, 772, 306, 74, 74, off_page_connector.png, 0, null
+SHAPE, 345, 575, 74, 74, sort.png, 0, 0, 50, 200, 255
+SHAPE, 516, 560, 74, 74, and.png, 0, 100, 255, 255, 255
+SHAPE, 696, 570, 74, 74, database.png, 0, 0, 100, 200, 255
+SHAPE, 283, 463, 74, 74, internal_storage.png, 0, 0, 100, 255, 255
+SHAPE, 626, 338, 74, 74, or.png, 0, null
+LABEL, 309, 495, 11, Stiff
+LABEL, 500, 283, 32, Oopss
+LABEL, 500, 463, 16, sadasdsa
+LABEL, 779, 324, 11, asdas
+LABEL, 742, 453, 46, sadas
+ARROW, 542, 338, 542, 431
+ARROW, 356, 492, 462, 483
+ARROW, 319, 538, 320, 612, 346, 612
+ARROW, 420, 612, 519, 614
+ARROW, 547, 491, 549, 559
+ARROW, 1010, 667, 1054, 669, 1038, 172, 548, 177, 542, 268
+ARROW, 467, 300, 323, 305, 319, 462
+ARROW, 612, 298, 663, 294, 662, 334
+ARROW, 610, 463, 721, 478
+ARROW, 735, 643, 736, 675, 861, 667
+ARROW, 871, 479, 932, 480, 932, 622
+ARROW, 810, 380, 810, 442
+ARROW, 591, 596, 702, 607

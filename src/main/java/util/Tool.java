@@ -30,8 +30,8 @@ public enum Tool
     DATABASE("database", "Indicates a list of information with a standard structure that allows for searching and sorting"),
     INTERNAL_STORAGE("internal_storage", "Indicates an internal storage device");
 
-    private String iconPath;
-    private String iconToolTip;
+    private final String iconPath;
+    private final String iconToolTip;
 
     Tool(String path, String toolTip)
     {
@@ -41,12 +41,12 @@ public enum Tool
 
     public String getIconPath()
     {
-        return "./src/res/" + iconPath + "_tool_icon.png";
+        return iconPath + "_tool_icon.png";
     }
 
     public String getIconPressedPath()
     {
-        return "./src/res/" + iconPath + "_tool_icon_pressed.png";
+        return iconPath + "_tool_icon_pressed.png";
     }
 
     public String getIconToolTip()
@@ -56,6 +56,6 @@ public enum Tool
 
     public String getShapePath()
     {
-        return "./src/res/" + iconPath + ".png";
+        return iconPath + ".png";
     }
 }

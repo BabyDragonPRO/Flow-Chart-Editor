@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 
 public class ImageButton extends JComponent
@@ -17,8 +16,8 @@ public class ImageButton extends JComponent
     public ImageButton(int x, int y, int width, int height, String path, String pathPressed)
     {
         try {
-            image = ImageIO.read(new File(path));
-            imagePressed = ImageIO.read(new File(pathPressed));
+            image = ImageIO.read(ClassLoader.getSystemClassLoader().getResource(path));
+            imagePressed = ImageIO.read(ClassLoader.getSystemClassLoader().getResource(pathPressed));
         }
 
         catch (IOException e)

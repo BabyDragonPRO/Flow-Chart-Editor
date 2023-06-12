@@ -29,7 +29,7 @@ public class ToolPanel extends JPanel
     public ToolPanel(int x, int y, EditorGUI parent)
     {
         try {
-            image = ImageIO.read(new File("./src/res/tool_panel.png"));
+            image = ImageIO.read(ClassLoader.getSystemClassLoader().getResource("tool_panel.png"));
         }
 
         catch (IOException e)
@@ -42,7 +42,7 @@ public class ToolPanel extends JPanel
         setBounds(x, y, 75, 550);
         setLayout(null);
 
-        closeButton = new ImageButton(45, 12, 20, 20, "./src/res/close_icon.png", "./src/res/close_icon.png");
+        closeButton = new ImageButton(45, 12, 20, 20, "close_icon.png", "close_icon.png");
 
         add(closeButton);
         addTools();
